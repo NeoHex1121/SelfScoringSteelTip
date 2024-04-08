@@ -99,21 +99,21 @@ def update_scores():
     lcd.text("Player 2: " + player2_update, 2)
     
 def RB():
-    global player1_score, player2_score
-    player1_score = 501
-    player2_score = 501
-    player1_score_str = str(player1_score)
-    player2_score_str = str(player2_score)
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     button = 23
     GPIO.setup(button, GPIO.OUT)
     if GPIO.input(button) == GPIO.HIGH:
+        global player1_score, player2_score
+        player1_score = 501
+        player2_score = 501
+        player1_score_str = str(player1_score)
+        player2_score_str = str(player2_score)
         lcd.clear()
         lcd.text("Game restart", 1)
         sleep(1)
-        lcd.text("Player1: " + player1_score_str, 1)
-        lcd.text("Player2: " + player2_score_str, 2)
+        lcd.text("Player 1: " + player1_score_str, 1)
+        lcd.text("Player 2: " + player2_score_str, 2)
         sleep(1)
     else:
         update_scores()
