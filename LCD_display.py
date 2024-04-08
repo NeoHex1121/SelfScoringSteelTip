@@ -82,19 +82,71 @@ bus = smbus.SMBus(1)
 #initial score
 player1_score = 501
 player2_score = 501
-    
-def update_scores():
-    #update the score
+
+def initial_scores():
     player1_score_str = str(player1_score)
     player2_score_str = str(player2_score)
     
     lcd.text("Player 1: " + player1_score_str, 1)
     lcd.text("Player 2: " + player2_score_str, 2)
-running = True
 
+def update_scores():
+    #update the score
+    player1_update = str(player1_score)
+    player2_update = str(player2_score)
+    
+    lcd.text("Player 1: " + player1_update, 1)
+    lcd.text("Player 2: " + player2_update, 2)
+    
+def RB():
+    global player1_score, player2_score
+    player1_score = 501
+    player2_score = 501
+    player1_score_str = str(player1_score)
+    player2_score_str = str(player2_score)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    button = 23
+    GPIO.setup(button, GPIO.OUT)
+    if GPIO.input(button) == GPIO.HIGH:
+        lcd.clear()
+        lcd.text("Game restart", 1)
+        sleep(1)
+        lcd.text("Player1: " + player1_score_str, 1)
+        lcd.text("Player2: " + player2_score_str, 2)
+        sleep(1)
+    else:
+        update_scores()
+    
+def NPB():
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setwarnings(False)
+    button = 18
+    GPIO.setup(button, GPIO.OUT)
+    if GPIO.input(button) == GPIO.HIGH:
+        lcd.clear()
+        lcd.text("Switch to " , 1)
+        lcd.text("Player2 " , 2)
+        sleep(1)
+        lcd.text("Player1: 401", 1)
+        lcd.text("Player2: 301", 2)
+        sleep(1)
+        lcd.clear()
+    else:
+        initial_scores()
+    
+running = True
 while running:
     #display original score
-    update_scores()
+    initial_scores()
+    
+    sleep(0.5)
+    
+    RB()
+    
+    sleep(0.5)
+    
+    NPB()
 
     #waiting time
     sleep(0.5)
@@ -111,58 +163,26 @@ while running:
     
     if player1_score <= 0:
         if player1_score < 0:
+            lcd.clear()
             lcd.text("Player1 BUST!!!", 1)
+            sleep(1)
+            running = False
         else:
+            lcd.clear()
             lcd.text("Player1 wins!!!", 1)
+            sleep(1)
+            running = False
     
     if player2_score <= 0:
         if player2_score < 0:
+            lcd.clear()
             lcd.text("Player2 BUST!!!", 1)
+            sleep(1)
+            running = False
         else:
-            lcd.text("Player2 wins!!!", 1)  
-            
-    if player1_score <= 0 or player2_score <= 0:
-        running = False
+            lcd.clear()
+            lcd.text("Player2 wins!!!", 1)
+            sleep(1)
+            running = False
     
     lcd.clear()
-
-#RB setting
-    
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-button = 23
-GPIO.setup(button, GPIO.OUT)
-for i in range(3):
-    time.sleep(1)
-    if GPIO.input(button) == GPIO.HIGH:
-        lcd.text("Game restart", 1)
-        sleep(1)
-        lcd.text("Player1: 501", 1)
-        lcd.text("Player2: 501", 2)
-        sleep(1)
-        lcd.clear()
-    else:
-        lcd.text("Game Continue", 1)
-        sleep(1)
-        lcd.clear()
-    
-#NPB setting
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-button = 18
-GPIO.setup(button, GPIO.OUT)
-for i in range(6):
-    time.sleep(1)
-    if GPIO.input(button) == GPIO.HIGH:
-        lcd.text("Switch to " , 1)
-        lcd.text("Player2 " , 2)
-        sleep(1)
-        lcd.text("Player1: 501", 1)
-        lcd.text("Player2: 501", 2)
-        sleep(1)
-        
-        lcd.clear()
-    else:
-        lcd.text("Game~~~~", 1)
-        sleep(1)
-        lcd.clear()
