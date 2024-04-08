@@ -83,20 +83,13 @@ bus = smbus.SMBus(1)
 player1_score = 501
 player2_score = 501
 
-def initial_scores():
+def update_scores():
+    #update the score
     player1_score_str = str(player1_score)
     player2_score_str = str(player2_score)
     
     lcd.text("Player 1: " + player1_score_str, 1)
     lcd.text("Player 2: " + player2_score_str, 2)
-
-def update_scores():
-    #update the score
-    player1_update = str(player1_score)
-    player2_update = str(player2_score)
-    
-    lcd.text("Player 1: " + player1_update, 1)
-    lcd.text("Player 2: " + player2_update, 2)
     
 def RB():
     GPIO.setmode(GPIO.BCM)
@@ -119,6 +112,8 @@ def RB():
         update_scores()
     
 def NPB():
+    player1_score_str = str(player1_score)
+    player2_score_str = str(player2_score)
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
     button = 18
@@ -128,61 +123,60 @@ def NPB():
         lcd.text("Switch to " , 1)
         lcd.text("Player2 " , 2)
         sleep(1)
-        lcd.text("Player1: 401", 1)
-        lcd.text("Player2: 301", 2)
+        lcd.text("Player 1: " + player1_score_str, 1)
+        lcd.text("Player 2: " + player2_score_str, 2)
         sleep(1)
         lcd.clear()
     else:
-        initial_scores()
+        update_scores()
     
 running = True
 while running:
-    #display original score
-    initial_scores()
-    
-    sleep(0.5)
-    
-    RB()
-    
-    sleep(0.5)
-    
-    NPB()
-
-    #waiting time
-    sleep(0.5)
-
     #sensor detected
-    player1_score -= 100
-    player2_score -= 19
-    
-    #update score and display
-    update_scores()
-    
-    #waiting time
-    sleep(0.5)
-    
-    if player1_score <= 0:
-        if player1_score < 0:
-            lcd.clear()
-            lcd.text("Player1 BUST!!!", 1)
-            sleep(1)
-            running = False
-        else:
-            lcd.clear()
-            lcd.text("Player1 wins!!!", 1)
-            sleep(1)
-            running = False
-    
-    if player2_score <= 0:
-        if player2_score < 0:
-            lcd.clear()
-            lcd.text("Player2 BUST!!!", 1)
-            sleep(1)
-            running = False
-        else:
-            lcd.clear()
-            lcd.text("Player2 wins!!!", 1)
-            sleep(1)
-            running = False
+    for i in range(3):
+        update_scores()
+        sleep(1)
+        player1_score -= 100
+        player1_score_str = str(player1_score)
+        player2_score_str = str(player2_score)
+        lcd.text("-->Player 1: " + player1_score_str, 1)
+        lcd.text("Player 2: " + player2_score_str, 2)
+        sleep(1)
+        RB()
+        NPB()
+        if player1_score <= 0:
+            if player1_score < 0:
+                lcd.clear()
+                lcd.text("Player1 BUST!!!", 1)
+                sleep(1)
+                running = False
+            else:
+                lcd.clear()
+                lcd.text("Player1 wins!!!", 1)
+                sleep(1)
+                running = False
+        
+    for j in range(3):
+        update_scores()
+        sleep(1)
+        player2_score -= 19
+        player1_score_str = str(player1_score)
+        player2_score_str = str(player2_score)
+        lcd.text("Player 1: " + player1_score_str, 1)
+        lcd.text("-->Player 2: " + player2_score_str, 2)
+        sleep(1)
+        RB()
+        NPB()
+        if player2_score <= 0:
+            if player2_score < 0:
+                lcd.clear()
+                lcd.text("Player2 BUST!!!", 1)
+                sleep(1)
+                running = False
+            else:
+                lcd.clear()
+                lcd.text("Player2 wins!!!", 1)
+                sleep(1)
+                running = False
     
     lcd.clear()
