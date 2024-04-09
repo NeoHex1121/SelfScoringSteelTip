@@ -82,6 +82,9 @@ bus = smbus.SMBus(1)
 #initial score
 player1_score = 501
 player2_score = 501
+current_player = 0
+throws_count1 = 0
+throws_count2 = 0
 
 def update_scores():
     #update the score
@@ -97,9 +100,12 @@ def RB():
     button = 23
     GPIO.setup(button, GPIO.OUT)
     if GPIO.input(button) == GPIO.HIGH:
-        global player1_score, player2_score
+        global player1_score, player2_score, current_player, throws_count1, throws_count2
         player1_score = 501
         player2_score = 501
+        current_player = 0
+        throws_count1 = 0
+        throws_count2 = 0
         player1_score_str = str(player1_score)
         player2_score_str = str(player2_score)
         lcd.clear()
@@ -108,10 +114,12 @@ def RB():
         lcd.text("Player 1: " + player1_score_str, 1)
         lcd.text("Player 2: " + player2_score_str, 2)
         sleep(1)
+        running = False
     else:
         update_scores()
-    
+
 def NPB():
+    global player1_score, player2_score, current_player
     player1_score_str = str(player1_score)
     player2_score_str = str(player2_score)
     GPIO.setmode(GPIO.BCM)
@@ -119,14 +127,23 @@ def NPB():
     button = 18
     GPIO.setup(button, GPIO.OUT)
     if GPIO.input(button) == GPIO.HIGH:
-        lcd.clear()
-        lcd.text("Switch to " , 1)
-        lcd.text("Player2 " , 2)
-        sleep(1)
-        lcd.text("Player 1: " + player1_score_str, 1)
-        lcd.text("Player 2: " + player2_score_str, 2)
-        sleep(1)
-        lcd.clear()
+        current_player = (current_player + 1) % 2
+        if current_player == 0:
+            lcd.text("Switch to " , 1)
+            lcd.text("Player2 " , 2)
+            sleep(1)
+            lcd.text("Player 1: " + player1_score_str, 1)
+            lcd.text("Player 2: " + player2_score_str, 2)
+            sleep(1)
+            lcd.clear()
+        else:
+            lcd.text("Switch to " , 1)
+            lcd.text("Player1 " , 2)
+            sleep(1)
+            lcd.text("Player 1: " + player1_score_str, 1)
+            lcd.text("Player 2: " + player2_score_str, 2)
+            sleep(1)
+            lcd.clear()
     else:
         update_scores()
     
@@ -134,7 +151,12 @@ running = True
 while running:
     #sensor detected
     for i in range(3):
+        if RB():
+            break
+        if NPB():
+            break
         update_scores()
+        current_player = 1
         sleep(1)
         player1_score -= 100
         player1_score_str = str(player1_score)
@@ -142,8 +164,8 @@ while running:
         lcd.text("-->Player 1: " + player1_score_str, 1)
         lcd.text("Player 2: " + player2_score_str, 2)
         sleep(1)
-        RB()
-        NPB()
+        throws_count1 += 1
+        throws_count1 <= 2
         if player1_score <= 0:
             if player1_score < 0:
                 lcd.clear()
@@ -157,7 +179,12 @@ while running:
                 running = False
         
     for j in range(3):
+        if RB():
+            break
+        if NPB():
+            break
         update_scores()
+        current_player = 2
         sleep(1)
         player2_score -= 19
         player1_score_str = str(player1_score)
@@ -165,8 +192,8 @@ while running:
         lcd.text("Player 1: " + player1_score_str, 1)
         lcd.text("-->Player 2: " + player2_score_str, 2)
         sleep(1)
-        RB()
-        NPB()
+        throws_count2 += 1
+        throws_count2 <= 2
         if player2_score <= 0:
             if player2_score < 0:
                 lcd.clear()
@@ -180,3 +207,4 @@ while running:
                 running = False
     
     lcd.clear()
+    
