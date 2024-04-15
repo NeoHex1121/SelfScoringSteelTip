@@ -150,6 +150,22 @@ def NPB():
         update_score1()
         update_score2()
     
+def bust(current_player):
+    global player1_score, player2_score, current_round_score
+    if current_player == 1:
+        player1_score = current_round_score[1]
+        lcd.clear()
+        lcd.text("Player1 BUST!!!", 1)
+        sleep(1)
+        return True
+    elif current_player == 2:
+        player2_score = current_round_score[2]
+        lcd.clear()
+        lcd.text("Player2 BUST!!!", 1)
+        sleep(1)
+        return True
+    return False
+    
 running = True
 
 lcd.text("Welcome to the", 1)
@@ -158,13 +174,13 @@ sleep(1)
 lcd.clear()
 
 while running:
-    
+    current_round_score = {1:player1_score, 2:player2_score}
     for i in range(3):
         update_score1()
         update_score2()
         current_player = 1
         sleep(1)
-        player1_score -= 200
+        player1_score -= 167
         player1_score_str = str(player1_score)
         player2_score_str = str(player2_score)
         lcd.text("->Player 1: " + player1_score_str, 1)
@@ -184,68 +200,54 @@ while running:
                 sleep(1)
                 if NPB():
                     break
-                if player1_score or player2_score <= 0:
-                    if player1_score < 0:
-                        lcd.clear()
-                        lcd.text("Player1 BUST!!!", 1)
-                        sleep(1)
-                        running = False
-                        break
-                    elif player1_score == 0:
-                        lcd.clear()
-                        lcd.text("Player1 wins!!!", 1)
-                        sleep(1)
-                        running = False
-                        break
-                    elif player2_score < 0:
-                        lcd.clear()
-                        lcd.text("Player2 BUST!!!", 1)
-                        sleep(1)
-                        running = False
-                        break
-                    elif player2_score == 0:
-                        lcd.clear()
-                        lcd.text("Player2 wins!!!", 1)
-                        sleep(1)
-                        running = False
-                        break
+                if player1_score < 0:
+                    bust(current_player)
+                    break
+                if player1_score == 0:
+                    lcd.clear()
+                    lcd.text("Player1 wins!!!", 1)
+                    sleep(1)
+                    running = False
+                    break
+                if player2_score < 0:
+                    bust(current_player)
+                    break
+                if player2_score == 0:
+                    lcd.clear()
+                    lcd.text("Player2 wins!!!", 1)
+                    sleep(1)
+                    running = False
+                    break
             break
         
         if NPB():
             break
         
-        if player1_score or player2_score <= 0:
-            if player1_score < 0:
-                lcd.clear()
-                lcd.text("Player1 BUST!!!", 1)
-                sleep(1)
-                running = False
-                break
-            elif player1_score == 0:
-                lcd.clear()
-                lcd.text("Player1 wins!!!", 1)
-                sleep(1)
-                running = False
-                break
-            elif player2_score < 0:
-                lcd.clear()
-                lcd.text("Player2 BUST!!!", 1)
-                sleep(1)
-                running = False
-                break
-            elif player2_score == 0:
-                lcd.clear()
-                lcd.text("Player2 wins!!!", 1)
-                sleep(1)
-                running = False
-                break 
+        if player1_score < 0:
+            bust(current_player)
+            break
+        if player1_score == 0:
+            lcd.clear()
+            lcd.text("Player1 wins!!!", 1)
+            sleep(1)
+            running = False
+            break
+        if player2_score < 0:
+            bust(current_player)
+            break
+        if player2_score == 0:
+            lcd.clear()
+            lcd.text("Player2 wins!!!", 1)
+            sleep(1)
+            running = False
+            break 
         
     for j in range(3):
         update_score1()
         update_score2()
         current_player = 2
         sleep(1)
-        player2_score -= 167
+        player2_score -= 300
         player1_score_str = str(player1_score)
         player2_score_str = str(player2_score)
         lcd.text("Player 1: " + player1_score_str, 1)
@@ -255,31 +257,23 @@ while running:
             break
         if NPB():
             break
-        if player1_score or player2_score <= 0:
-            if player1_score < 0:
-                lcd.clear()
-                lcd.text("Player1 BUST!!!", 1)
-                sleep(1)
-                running = False
-                break
-            elif player1_score == 0:
-                lcd.clear()
-                lcd.text("Player1 wins!!!", 1)
-                sleep(1)
-                running = False
-                break
-            elif player2_score < 0:
-                lcd.clear()
-                lcd.text("Player2 BUST!!!", 1)
-                sleep(1)
-                running = False
-                break
-            elif player2_score == 0:
-                lcd.clear()
-                lcd.text("Player2 wins!!!", 1)
-                sleep(1)
-                running = False
-                break
+        if player1_score < 0:
+            bust(current_player)
+            break
+        if player1_score == 0:
+            lcd.clear()
+            lcd.text("Player1 wins!!!", 1)
+            sleep(1)
+            running = False
+            break
+        if player2_score < 0:
+            bust(current_player)
+            break
+        if player2_score == 0:
+            lcd.clear()
+            lcd.text("Player2 wins!!!", 1)
+            sleep(1)
+            running = False
+            break
     
     lcd.clear()
-    
