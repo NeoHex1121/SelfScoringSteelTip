@@ -83,15 +83,14 @@ bus = smbus.SMBus(1)
 player1_score = 501
 player2_score = 501
 current_player = 0
-throws_count1 = 0
-throws_count2 = 0
 
-def update_scores():
+def update_score1():
     #update the score
     player1_score_str = str(player1_score)
-    player2_score_str = str(player2_score)
-    
     lcd.text("Player 1: " + player1_score_str, 1)
+    
+def update_score2():
+    player2_score_str = str(player2_score)
     lcd.text("Player 2: " + player2_score_str, 2)
     
 def RB():
@@ -100,12 +99,11 @@ def RB():
     button = 23
     GPIO.setup(button, GPIO.OUT)
     if GPIO.input(button) == GPIO.HIGH:
-        global player1_score, player2_score, current_player, throws_count1, throws_count2
+        global player1_score, player2_score, current_player
         player1_score = 501
         player2_score = 501
         current_player = 0
-        throws_count1 = 0
-        throws_count2 = 0
+        Dart_Count = 0
         player1_score_str = str(player1_score)
         player2_score_str = str(player2_score)
         lcd.clear()
@@ -114,9 +112,11 @@ def RB():
         lcd.text("Player 1: " + player1_score_str, 1)
         lcd.text("Player 2: " + player2_score_str, 2)
         sleep(1)
-        running = False
+        return True
     else:
-        update_scores()
+        update_score1()
+        update_score2()
+        return False
 
 def NPB():
     global player1_score, player2_score, current_player
@@ -136,6 +136,7 @@ def NPB():
             lcd.text("Player 2: " + player2_score_str, 2)
             sleep(1)
             lcd.clear()
+            return True
         else:
             lcd.text("Switch to " , 1)
             lcd.text("Player1 " , 2)
@@ -144,67 +145,141 @@ def NPB():
             lcd.text("Player 2: " + player2_score_str, 2)
             sleep(1)
             lcd.clear()
+            return True
     else:
-        update_scores()
+        update_score1()
+        update_score2()
     
 running = True
+
+lcd.text("Welcome to the", 1)
+lcd.text("Dartboard Game!", 2)
+sleep(1)
+lcd.clear()
+
 while running:
-    #sensor detected
+    
     for i in range(3):
-        if RB():
-            break
-        if NPB():
-            break
-        update_scores()
+        update_score1()
+        update_score2()
         current_player = 1
         sleep(1)
-        player1_score -= 100
+        player1_score -= 200
         player1_score_str = str(player1_score)
         player2_score_str = str(player2_score)
-        lcd.text("-->Player 1: " + player1_score_str, 1)
+        lcd.text("->Player 1: " + player1_score_str, 1)
         lcd.text("Player 2: " + player2_score_str, 2)
         sleep(1)
-        throws_count1 += 1
-        throws_count1 <= 2
-        if player1_score <= 0:
+        if RB():
+            for i in range(3):
+                update_score1()
+                update_score2()
+                current_player = 1
+                sleep(1)
+                player1_score -= 50
+                player1_score_str = str(player1_score)
+                player2_score_str = str(player2_score)
+                lcd.text("->Player 1: " + player1_score_str, 1)
+                lcd.text("Player 2: " + player2_score_str, 2)
+                sleep(1)
+                if NPB():
+                    break
+                if player1_score or player2_score <= 0:
+                    if player1_score < 0:
+                        lcd.clear()
+                        lcd.text("Player1 BUST!!!", 1)
+                        sleep(1)
+                        running = False
+                        break
+                    elif player1_score == 0:
+                        lcd.clear()
+                        lcd.text("Player1 wins!!!", 1)
+                        sleep(1)
+                        running = False
+                        break
+                    elif player2_score < 0:
+                        lcd.clear()
+                        lcd.text("Player2 BUST!!!", 1)
+                        sleep(1)
+                        running = False
+                        break
+                    elif player2_score == 0:
+                        lcd.clear()
+                        lcd.text("Player2 wins!!!", 1)
+                        sleep(1)
+                        running = False
+                        break
+            break
+        
+        if NPB():
+            break
+        
+        if player1_score or player2_score <= 0:
             if player1_score < 0:
                 lcd.clear()
                 lcd.text("Player1 BUST!!!", 1)
                 sleep(1)
                 running = False
-            else:
+                break
+            elif player1_score == 0:
                 lcd.clear()
                 lcd.text("Player1 wins!!!", 1)
                 sleep(1)
                 running = False
-        
-    for j in range(3):
-        if RB():
-            break
-        if NPB():
-            break
-        update_scores()
-        current_player = 2
-        sleep(1)
-        player2_score -= 19
-        player1_score_str = str(player1_score)
-        player2_score_str = str(player2_score)
-        lcd.text("Player 1: " + player1_score_str, 1)
-        lcd.text("-->Player 2: " + player2_score_str, 2)
-        sleep(1)
-        throws_count2 += 1
-        throws_count2 <= 2
-        if player2_score <= 0:
-            if player2_score < 0:
+                break
+            elif player2_score < 0:
                 lcd.clear()
                 lcd.text("Player2 BUST!!!", 1)
                 sleep(1)
                 running = False
-            else:
+                break
+            elif player2_score == 0:
                 lcd.clear()
                 lcd.text("Player2 wins!!!", 1)
                 sleep(1)
                 running = False
+                break 
+        
+    for j in range(3):
+        update_score1()
+        update_score2()
+        current_player = 2
+        sleep(1)
+        player2_score -= 167
+        player1_score_str = str(player1_score)
+        player2_score_str = str(player2_score)
+        lcd.text("Player 1: " + player1_score_str, 1)
+        lcd.text("->Player 2: " + player2_score_str, 2)
+        sleep(1)
+        if RB():
+            break
+        if NPB():
+            break
+        if player1_score or player2_score <= 0:
+            if player1_score < 0:
+                lcd.clear()
+                lcd.text("Player1 BUST!!!", 1)
+                sleep(1)
+                running = False
+                break
+            elif player1_score == 0:
+                lcd.clear()
+                lcd.text("Player1 wins!!!", 1)
+                sleep(1)
+                running = False
+                break
+            elif player2_score < 0:
+                lcd.clear()
+                lcd.text("Player2 BUST!!!", 1)
+                sleep(1)
+                running = False
+                break
+            elif player2_score == 0:
+                lcd.clear()
+                lcd.text("Player2 wins!!!", 1)
+                sleep(1)
+                running = False
+                break
     
     lcd.clear()
     
