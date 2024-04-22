@@ -3,6 +3,7 @@ import time
 import smbus
 from smbus import SMBus
 from time import sleep
+import sys
 
 ALIGN_FUNC = {
     'left': 'ljust',
@@ -165,14 +166,13 @@ def bust(current_player):
         sleep(1)
         return True
     return False
-    
-running = True
 
 lcd.text("Welcome to the", 1)
-lcd.text("Dartboard Game!", 2)
+lcd.text("501 Darts Game!", 2)
 sleep(1)
 lcd.clear()
 
+running = True
 while running:
     current_round_score = {1:player1_score, 2:player2_score}
     for i in range(3):
@@ -180,7 +180,7 @@ while running:
         update_score2()
         current_player = 1
         sleep(1)
-        player1_score -= 167
+        player1_score -= 200
         player1_score_str = str(player1_score)
         player2_score_str = str(player2_score)
         lcd.text("->Player 1: " + player1_score_str, 1)
@@ -208,7 +208,8 @@ while running:
                     lcd.text("Player1 wins!!!", 1)
                     sleep(1)
                     running = False
-                    break
+                    lcd.clear()
+                    sys.exit(0)
                 if player2_score < 0:
                     bust(current_player)
                     break
@@ -217,7 +218,8 @@ while running:
                     lcd.text("Player2 wins!!!", 1)
                     sleep(1)
                     running = False
-                    break
+                    lcd.clear()
+                    sys.exit(0)
             break
         
         if NPB():
@@ -231,7 +233,8 @@ while running:
             lcd.text("Player1 wins!!!", 1)
             sleep(1)
             running = False
-            break
+            lcd.clear()
+            sys.exit(0)
         if player2_score < 0:
             bust(current_player)
             break
@@ -240,14 +243,15 @@ while running:
             lcd.text("Player2 wins!!!", 1)
             sleep(1)
             running = False
-            break 
+            lcd.clear()
+            sys.exit(0) 
         
     for j in range(3):
         update_score1()
         update_score2()
         current_player = 2
         sleep(1)
-        player2_score -= 300
+        player2_score -= 167
         player1_score_str = str(player1_score)
         player2_score_str = str(player2_score)
         lcd.text("Player 1: " + player1_score_str, 1)
@@ -265,7 +269,8 @@ while running:
             lcd.text("Player1 wins!!!", 1)
             sleep(1)
             running = False
-            break
+            lcd.clear()
+            sys.exit(0)
         if player2_score < 0:
             bust(current_player)
             break
@@ -274,6 +279,7 @@ while running:
             lcd.text("Player2 wins!!!", 1)
             sleep(1)
             running = False
-            break
+            lcd.clear()
+            sys.exit(0)
     
     lcd.clear()
