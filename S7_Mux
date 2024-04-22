@@ -1,0 +1,15 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.STD_LOGIC_UNSIGNED.ALL;
+
+entity S7_Mux; is
+  Port(C_SEL: in std_logic_vector(5 downto 0);--creates 6 bits that make the channel select sigals. The Pi will control these.
+       COL: in std_logic_vector(0 to 11);--creates the 11 channels of the multiplexer.
+       C: out std_logic);--creates the output of the multiplexer
+end S7_Mux;
+
+architecture Behavioral of S7_Mux is
+
+begin
+  C<= COL(conv_integer(C_SEL));--as the Pi cycles the C_SEL lines from binary 0 thru 36, the C_SEL lines are converted to their integer equivalents.  This integer is used as an index to route the status (above or below FPGA threshold voltage) of the input of the specified channel to the MUX output, C.
+end Behavioral;
